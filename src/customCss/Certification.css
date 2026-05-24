@@ -1,0 +1,117 @@
+.header-certificate span {
+  font-size: 60px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: #2c144a;
+  text-shadow: 8px 3px 2px rgba(0, 0, 0, 0.3);
+}
+
+.describe p {
+  color: #d6e2e9;
+  font-weight: 500;
+  font-size: 22px;
+  margin-top: 12px;
+  letter-spacing: 1px;
+  text-align: center;
+  margin-bottom: 25px;
+}
+
+.certification-card {
+  border-radius: 16px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  background: linear-gradient(to bottom left, #ab6eec, #2c8cbf, #797ce9);
+  padding: 30px 20px 30px 20px;
+}
+
+.card-certificatenumber {
+  color: #111827;
+}
+
+.verify-btn {
+  color: #111827;
+  border: 1px solid black;
+}
+
+.verify-btn:hover {
+  border: 1px solid #2563eb;
+  background-color: #2563eb;
+}
+
+.card-title {
+  color: white;
+}
+
+.card-platform {
+  color: black;
+  font-size: 20px;
+}
+
+.certification-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.1);
+
+}
+
+.floating-icon {
+  font-size: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.award-icon {
+  width: 25px;
+  height: 25px;
+  color: #2dff2d;
+}
+
+.certificate-box {
+  background: #88a8ff;
+  padding: 12px;
+  border-radius: 10px;
+  margin-top: 12px;
+}
+
+.certificate-box span {
+  font-size: 14px;
+  color: #6c757d;
+  display: block;
+}
+
+.certificate-box strong {
+  font-size: 16px;
+  letter-spacing: 0.5px;
+}
+
+.custom-icon {
+  width: 1.5rem;
+  height: 1.5rem;
+  color: #0015ff;
+  font-weight: bolder;
+  flex-shrink: 0;
+  margin-top: 0.25rem;
+}
+
+.header-certificate-extra {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 22px;
+  color: #000000;
+  font-weight: 600;
+  padding-top: 20px;
+  padding-bottom: 5px;
+}
+
+.extra-paragraph {
+  margin-left: 6rem;
+  margin-right: 6rem;
+  padding-bottom: 15px;
+  font-size: 16px;
+  text-align: justify;
+  color: rgb(255, 255, 255);
+}
+
+.extra-card {
+  background: linear-gradient(to bottom left, #bc87f4, #2f93c9, #686deb);
+}

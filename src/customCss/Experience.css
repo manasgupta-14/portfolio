@@ -1,0 +1,166 @@
+.experience-section {
+    color: #fff;
+    overflow-x: hidden;
+}
+
+.scene-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: auto;
+    perspective: 1000px;
+}
+
+.scene-container img {
+    max-width: 100%;
+    height: auto;
+    filter: drop-shadow(0 0 10px rgba(3, 233, 244, 0.3));
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.header span {
+    font-size: 60px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: #412365;
+    text-shadow: 8px 3px 2px rgba(0, 0, 0, 0.3);
+}
+
+.experince-subtitle {
+    color: #d6e2e9;
+    font-weight: 500;
+    font-size: 22px;
+    margin-top: 25px;
+    letter-spacing: 1px;
+}
+
+.timeline {
+    position: relative;
+    padding: 10px 0;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.timeline::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 20px;
+    height: 100%;
+    width: 2px;
+    background: #5784ff;
+    box-shadow: 0 0 7px #a43ee7;
+}
+
+.timeline-item {
+    position: relative;
+    margin-bottom: 30px;
+    padding-left: 60px;
+}
+
+.timeline-item::before {
+    content: '';
+    position: absolute;
+    top: 25px;
+    left: 11px;
+    width: 20px;
+    height: 20px;
+    background: #9634ff;
+    border: 3px solid #1e9ee2;
+    border-radius: 50%;
+    box-shadow: 0 0 10px #b5b7ff;
+    z-index: 1;
+}
+
+.timeline-content {
+    position: relative;
+    padding: 25px;
+    background: linear-gradient(to bottom left, #7a3abf, #2e9cd7, #5a5ed3);
+    border: 1px solid #3a0ca3;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s ease;
+    overflow: hidden;
+}
+
+.neon-border {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 5px;
+    width: 100%;
+    background: linear-gradient(90deg, transparent, #e564ff, #ce53ff, transparent);
+    transform: translateX(-100%);
+    z-index: 2;
+}
+
+.timeline-content:hover .neon-border {
+    animation: neon-flow 1.5s linear infinite;
+}
+
+@keyframes neon-flow {
+    0% {
+        transform: translateX(-100%);
+    }
+
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+.date {
+    color: #000;
+    font-weight: 500;
+    margin-bottom: 10px;
+    display: block;
+}
+
+.content-body {
+    display: flex;
+    align-items: center;
+}
+
+.icon-container {
+    font-size: 35px;
+    margin-right: 20px;
+    color: #fff;
+}
+
+.title {
+    margin: 0;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #fceef1;
+}
+
+.company {
+    margin: 0;
+    color: #949494;
+    font-size: 17px;
+    text-shadow: 1px 0px 3px rgba(0, 0, 0, 0.90);
+    font-weight: 600;
+}
+
+@media (max-width: 768px) {
+    .experience-section {
+        padding: 15px 10px;
+        min-height: auto;
+    }
+
+    .header {
+        margin-top: 10px;
+        margin-bottom: 25px;
+    }
+
+    .scene-container {
+        margin-bottom: 30px;
+    }
+
+    .timeline {
+        padding-left: 1px;
+    }
+}
