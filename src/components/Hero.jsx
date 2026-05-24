@@ -120,7 +120,7 @@ function Hero() {
 }
 const downloadCV = () => {
   const link = document.createElement("a");
-  link.href = "./ManasGupta_Resume.pdf";
+  link.href = "./Manas_Gupta_Resume.pdf";
   link.download = "Manas_Gupta_Resume.pdf";
   document.body.appendChild(link);
   link.click();
