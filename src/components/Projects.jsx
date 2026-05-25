@@ -21,8 +21,9 @@ const projects = [
     title: "Restaurant Management System",
     description:
       "A modern restaurant website with menu, contact and responsive design.",
+    url: "https://manasgupta-14.github.io/Restaurant-/",
     icon: UtensilsCrossed,
-    technologies: ["HTML", "CSS", "JavaScript", "Bootstrap"],
+    technologies: ["HTML", "CSS"],
   },
   {
     title: "School Website",
