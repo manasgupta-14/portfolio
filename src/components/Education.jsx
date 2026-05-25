@@ -32,15 +32,15 @@ function Education() {
       status: "Complete",
       percent: "77%",
     },
-    {
-      id: 4,
-      year: "2017",
-      course: "Middle School",
-      college: "Y S Y S I C SAMAYATHAN BHITI",
-      address: "Gorakhpur, Uttar Pradesh",
-      status: "Complete",
-      percent: "77%",
-    },
+    // {
+    //   id: 4,
+    //   year: "2017",
+    //   course: "Middle School",
+    //   college: "Y S Y S I C SAMAYATHAN BHITI",
+    //   address: "Gorakhpur, Uttar Pradesh",
+    //   status: "Complete",
+    //   percent: "77%",
+    // },
   ];
 
   return (
