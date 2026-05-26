@@ -7,7 +7,7 @@ function Experience() {
   const experiences = [
     {
       id: 1,
-      date: "(Sept 2024 - Present)",
+      date: "(Sept 2024 - Dec 2025)",
       title: "Full Stack Developer",
       company: "Personal & Academic Projects",
     },
@@ -19,6 +19,12 @@ function Experience() {
     },
     {
       id: 3,
+      date: "(Jan 2026 - Present)",
+      title: "MERN + AI Training",
+      company: "CETPA Infotech Pvt Ltd",
+    },
+    {
+      id: 4,
       date: "(Jan 2022 - Present)",
       title: "Self Employed",
       company: "Code & build projects on a daily basis",

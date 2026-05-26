@@ -4,6 +4,16 @@ import { motion } from "framer-motion";
 
 const certifications = [
   {
+    title: "MERN + AI Training",
+    platform: "CETPA Infotech Pvt Ltd",
+    description:
+      "I am pursuing MERN Stack and AI training from CETPA, where I am gaining practical knowledge of HTML, CSS, JavaScript, React, Node.js, MongoDB, and Artificial Intelligence for building modern web applications.",
+    // verifyUrl:
+    //   "https://trainings.internshala.com/verify-certificate/?certificate_number=aeb1tsunvga1",
+    // certificateNumber: "aeb1sunvqa1",
+    icon: "💻",
+  },
+  {
     title: "Web Development Training",
     platform: "Internshala",
     description:
@@ -50,56 +60,64 @@ function Certification() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}>
         <div className="row">
-          {certifications.map((cert, index) => (
-            <div className="col-md-6 mb-4" key={index}>
-              <div className="card h-100 certification-card">
-                <div className="card-body">
-                  <h5 className="card-title d-flex align-items-center gap-2">
-                    <motion.div
-                      className="floating-icon"
-                      animate={{
-                        y: [0, -10, 0],
-                        rotate: [0, 3, -3, 0],
-                      }}
-                      transition={{
-                        duration: 2.5,
-                        repeat: Infinity,
-                        ease: "easeInOut",
-                        delay: index * 0.4,
-                      }}
-                    >
-                      {cert.icon}
-                    </motion.div>
+         {certifications.map((cert, index) => (
+  <div
+    className={`col-md-6 mb-4 ${
+      certifications.length % 2 !== 0 &&
+      index === certifications.length - 1
+        ? "mx-auto"
+        : ""
+    }`}
+    key={index}
+  >
+    <div className="card h-100 certification-card">
+      <div className="card-body">
+        <h5 className="card-title d-flex align-items-center gap-2">
+          <motion.div
+            className="floating-icon"
+            animate={{
+              y: [0, -10, 0],
+              rotate: [0, 3, -3, 0],
+            }}
+            transition={{
+              duration: 2.5,
+              repeat: Infinity,
+              ease: "easeInOut",
+              delay: index * 0.4,
+            }}
+          >
+            {cert.icon}
+          </motion.div>
 
-                    <Award className="award-icon" />
+          <Award className="award-icon" />
 
-                    <p className="card-title">{cert.title}</p>
-                  </h5>
+          <p className="card-title">{cert.title}</p>
+        </h5>
 
-                  <h6 className="card-platform">{cert.platform}</h6>
+        <h6 className="card-platform">{cert.platform}</h6>
 
-                  <p className="card-text mt-4">{cert.description}</p>
+        <p className="card-text mt-4">{cert.description}</p>
 
-                  <div className="certificate-box">
-                    <span>Certificate Number</span>
-                    <strong className="card-certificatenumber">
-                      {cert.certificateNumber}
-                    </strong>
-                  </div>
+        <div className="certificate-box">
+          <span>Certificate Number</span>
+          <strong className="card-certificatenumber">
+            {cert.certificateNumber}
+          </strong>
+        </div>
 
-                  <a
-                    href={cert.verifyUrl}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="btn w-100 mt-3 d-flex justify-content-center align-items-center gap-2 verify-btn"
-                  >
-                    <ExternalLink size={16} />
-                    Verify Certificate
-                  </a>
-                </div>
-              </div>
-            </div>
-          ))}
+        <a
+          href={cert.verifyUrl}
+          target="_blank"
+          rel="noreferrer"
+          className="btn w-100 mt-3 d-flex justify-content-center align-items-center gap-2 verify-btn"
+        >
+          <ExternalLink size={16} />
+          Verify Certificate
+        </a>
+      </div>
+    </div>
+  </div>
+))}
         </div>
       </motion.div>
 
@@ -125,10 +143,7 @@ function Certification() {
                 <span>Extra Curricular Activities</span>
               </div>
               <p className="extra-paragraph">
-                Currently completing online training in Web Development and
-                Internship & Job Preparation on the Internshala platform,
-                continuously enhancing skills and staying updated with industry
-                trends.
+                Successfully completed online training in Web Development and Internship & Job Preparation via Internshala, gaining practical skills and staying aligned with current industry trends.
               </p>
             </div>
           </div>

@@ -56,10 +56,10 @@ function Education() {
               transition={{ duration: 0.6 }}
             >
               <span>Education</span>
-              
-            <p className="education-subtitle">
-              My academic background and learning journey.
-            </p>
+
+              <p className="education-subtitle">
+                My academic background and learning journey.
+              </p>
             </motion.h2>
           </div>
         </div>
@@ -68,7 +68,11 @@ function Education() {
           {cards.map((card, index) => (
             <motion.div
               key={card.id}
-              className="col-12 col-md-6"
+              className={`col-12 col-md-6 ${
+                cards.length % 2 !== 0 && index === cards.length - 1
+                  ? "mx-auto"
+                  : ""
+              }`}
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
