@@ -1,5 +1,5 @@
 import "../customCss/About.css";
-import profileImage from "../assets/Profile-Image.jpg";
+import profileImage from "../assets/Photo.jpg";
 import { motion } from "framer-motion";
 
 function About() {
