@@ -134,7 +134,7 @@ function Contact() {
                 <div className="icon-circle">
                   <FaMapMarkerAlt />
                 </div>
-                <span className="info-text">Noida, UP</span>
+                <span className="info-text">New Ashok Nagar, Delhi</span>
               </div>
 
               <motion.div

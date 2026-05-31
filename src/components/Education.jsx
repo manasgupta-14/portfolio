@@ -12,7 +12,7 @@ function Education() {
       college: "JS University",
       address: "Shikhobad, Uttar Pradesh",
       status: "Complete",
-      percent: "73%",
+      percent: "76%",
     },
     {
       id: 2,
