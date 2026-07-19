@@ -13,9 +13,9 @@ const projects = [
     title: "Tourism Website",
     description:
       "A comprehensive tourism website featuring online repairing, attendance management system, and various web development projects.",
-    url: "https://indiaghumlo.kesug.com",
+    url: "https://manasgupta-14.github.io/Mera-Safar---Safar-Aapka-Zimmedari-Hamari-/",
     icon: Globe,
-    technologies: ["HTML", "CSS", "JavaScript", "PHP", "MySQL"],
+    technologies: ["HTML", "CSS", "JavaScript"],
   },
   {
     title: "Restaurant Management System",

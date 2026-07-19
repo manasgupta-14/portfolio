@@ -55,7 +55,7 @@ function Hero() {
           <motion.a
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.95 }}
-            href="https://github.com"
+            href="https://github.com/manasgupta-14"
             target="_blank"
             rel="noopener noreferrer"
             className="social-icon"
