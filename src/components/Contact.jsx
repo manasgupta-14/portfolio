@@ -1,204 +1,80 @@
-import React, { useState, useEffect } from "react";
-import "../customCss/Contact.css";
+import { useState } from "react";
 import { motion } from "framer-motion";
 import {
-  FaEnvelope,
-  FaPhoneAlt,
-  FaMapMarkerAlt,
-  FaLinkedin,
-  FaFacebook,
-  FaGithub,
-  FaStackOverflow,
-  FaPaperPlane,
-  FaArrowUp,
-  FaYoutube, 
-  FaInstagram,
+  FaEnvelope, FaPhoneAlt, FaMapMarkerAlt, FaLinkedin, FaGithub, FaYoutube, FaInstagram,
+  FaFacebook, FaWhatsapp, FaCheckCircle, FaExclamationCircle,
 } from "react-icons/fa";
-import { FaXTwitter } from "react-icons/fa6";
+import { SectionHead } from "./Section";
+import { useMagnetic, useTilt } from "../lib/hooks";
+import { api } from "../lib/api";
 
-function Contact() {
+function Social({ href, label, children }) {
+  const m = useMagnetic(0.4);
+  if (!href) return null;
+  return <a ref={m.ref} onMouseMove={m.onMouseMove} onMouseLeave={m.onMouseLeave} className="social-btn" href={href} target="_blank" rel="noreferrer" aria-label={label}>{children}</a>;
+}
 
-  const [showButton, setShowButton] = useState(false);
+export default function Contact({ profile }) {
+  const [form, setForm] = useState({ name: "", email: "", message: "", website: "" });
+  const [status, setStatus] = useState({ type: "idle", text: "" });
+  const tilt = useTilt(4);
+  const set = (k) => (e) => setForm({ ...form, [k]: e.target.value });
 
-  useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > 300) {
-        setShowButton(true);
-      } else {
-        setShowButton(false);
-      }
-    };
+  // WhatsApp number: admin "WhatsApp" field, otherwise the phone number (10 digits -> India +91)
+  const waNumber = (() => {
+    const d = (profile.whatsapp || profile.phone || "").replace(/\D/g, "");
+    return d.length === 10 ? "91" + d : d;
+  })();
 
-    window.addEventListener("scroll", handleScroll);
-
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  const scrollToTop = () => {
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth",
-    });
+  const submit = (e) => {
+    e.preventDefault();
+    if (form.website) return; // bot
+    if (!waNumber) {
+      setStatus({ type: "err", text: "WhatsApp number is not set yet. Please use the email or phone shown here." });
+      return;
+    }
+    const text = `Hello ${(profile.name || "").split(" ")[0]}, I am ${form.name.trim()}.\nEmail: ${form.email.trim()}\n\n${form.message.trim()}`;
+    // must open synchronously inside the click so the browser does not block the popup
+    window.open(`https://wa.me/${waNumber}?text=${encodeURIComponent(text)}`, "_blank", "noopener");
+    api.contact({ name: form.name, email: form.email, message: form.message }).catch(() => {}); // keep a copy in admin inbox
+    setStatus({ type: "ok", text: "WhatsApp opened with your message. Just press Send there to deliver it." });
+    setForm({ name: "", email: "", message: "", website: "" });
   };
 
   return (
-    <>
-      <div className="contact-section" id="contact">
-        <div className="container-fluid">
-          <motion.div
-            className="row mb-3"
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.8, delay: 0.3 }}
-          >
-            <div className="col-12">
-              <h2 className="section-title mx-5">Get In Touch</h2>
+    <section className="section" id="contact">
+      <div className="wrap">
+        <SectionHead title="Get In Touch" sub="Have a question or a work opportunity? Send a message and I will reply as soon as I can." />
+        <div className="contact-grid">
+          <motion.form className="glass form tilt" ref={tilt.ref} onMouseMove={tilt.onMouseMove} onMouseLeave={tilt.onMouseLeave} onSubmit={submit}
+            initial={{ opacity: 0, x: -40 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.7 }}>
+            <div className="field"><input id="c-name" placeholder=" " value={form.name} onChange={set("name")} required maxLength={120} autoComplete="name" /><label htmlFor="c-name">Your name</label></div>
+            <div className="field"><input id="c-email" type="email" placeholder=" " value={form.email} onChange={set("email")} required maxLength={200} autoComplete="email" /><label htmlFor="c-email">Your email</label></div>
+            <div className="field"><textarea id="c-msg" rows={5} placeholder=" " value={form.message} onChange={set("message")} required maxLength={4000} /><label htmlFor="c-msg">Your message</label></div>
+            <input className="hp" tabIndex={-1} autoComplete="off" aria-hidden="true" name="website" value={form.website} onChange={set("website")} />
+            {status.type === "ok" && <motion.div className="notice ok" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} role="status"><FaCheckCircle style={{ marginTop: 3 }} /> {status.text}</motion.div>}
+            {status.type === "err" && <motion.div className="notice err" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} role="alert"><FaExclamationCircle style={{ marginTop: 3 }} /> {status.text}</motion.div>}
+            <button className="btn btn-fill" type="submit">
+              Send message <FaWhatsapp size={18} />
+            </button>
+          </motion.form>
+
+          <motion.div initial={{ opacity: 0, x: 40 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.7 }}>
+            <div className="info-list">
+              {profile.email && <a className="glass info" href={`mailto:${profile.email}`}><span className="ic"><FaEnvelope /></span><div><small>Email</small><span>{profile.email}</span></div></a>}
+              {profile.phone && <a className="glass info" href={`tel:${profile.phone.replace(/\s/g, "")}`}><span className="ic"><FaPhoneAlt /></span><div><small>Phone</small><span>{profile.phone}</span></div></a>}
+              {profile.location && <div className="glass info"><span className="ic"><FaMapMarkerAlt /></span><div><small>Location</small><span>{profile.location}</span></div></div>}
+            </div>
+            <div className="contact-social">
+              <Social href={profile.github} label="GitHub"><FaGithub /></Social>
+              <Social href={profile.linkedin} label="LinkedIn"><FaLinkedin /></Social>
+              <Social href={profile.youtube} label="YouTube"><FaYoutube /></Social>
+              <Social href={profile.instagram} label="Instagram"><FaInstagram /></Social>
+              <Social href={profile.facebook} label="Facebook"><FaFacebook /></Social>
             </div>
           </motion.div>
-
-          <div className="row align-items-center mx-4">
-            <motion.div
-              className="col-lg-6 col-md-12"
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.8, delay: 0.3 }}
-            >
-              <div className="contact-card">
-                <form className="contact-form">
-                  <p className="form-description">
-                    If you have any questions or concerns, please don't hesitate
-                    to contact me. I am open to any work opportunities that
-                    align with my skills and interests.
-                  </p>
-
-                  <div className="form-group mb-3">
-                    <label className="form-label">Your Name:</label>
-                    <input
-                      type="text"
-                      className="form-control custom-input"
-                    />
-                  </div>
-
-                  <div className="form-group mb-3">
-                    <label className="form-label">Your Email:</label>
-                    <input
-                      type="email"
-                      className="form-control custom-input"
-                    />
-                  </div>
-
-                  <div className="form-group mb-4">
-                    <label className="form-label">Your Message:</label>
-                    <textarea
-                      className="form-control custom-input"
-                      rows="4"
-                    ></textarea>
-                  </div>
-
-                  <button type="button" className="btn send-btn">
-                    SEND MESSAGE <FaPaperPlane className="ms-2" />
-                  </button>
-                </form>
-              </div>
-            </motion.div>
-
-            <motion.div
-              className="col-lg-6 col-md-12 contact-info-section ps-lg-5"
-              initial={{ opacity: 0, x: -60 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8 }}
-            >
-              <div className="info-item">
-                <div className="icon-circle">
-                  <a href="mailto:manasmggupta@gmail.com">
-                    <FaEnvelope />
-                  </a>
-                </div>
-                <span className="info-text">
-                  manasmggupta@gmail.com
-                </span>
-              </div>
-
-              <div className="info-item">
-                <div className="icon-circle">
-                  <a href="tel:9555998119">
-                    <FaPhoneAlt />
-                  </a>
-                </div>
-                <span className="info-text">
-                  <a href="tel:9555998119">+91 9555998119</a>
-                </span>
-              </div>
-
-              <div className="info-item">
-                <div className="icon-circle">
-                  <FaMapMarkerAlt />
-                </div>
-                <span className="info-text">New Ashok Nagar, Delhi</span>
-              </div>
-
-              <motion.div
-                className="social-icons-row mt-5"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.7, duration: 0.6 }}
-              >
-                <a href="https://github.com" target="_blank" className="social-circle">
-                  <FaGithub />
-                </a>
-                <a href="https://www.linkedin.com/in/manas-gupta-97a4a4256/" target="_blank" className="social-circle">
-                  <FaLinkedin />
-                </a>
-                <a href="https://www.youtube.com/@codingclutch_14" target="_blank" rel="noreferrer" className="social-circle">
-                  <FaYoutube />
-                </a>
-                <a href="https://www.instagram.com/manas.__.nigam/" target="_blank" rel="noreferrer" className="social-circle">
-                  <FaInstagram />
-                </a>
-                <a href="https://www.facebook.com/Manas1408" target="_blank" className="social-circle">
-                  <FaFacebook />
-                </a>
-              </motion.div>
-            </motion.div>
-          </div>
-        </div>
-
-        <motion.div
-          className="vertical-label"
-          initial={{ opacity: 0, y: -20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-        >
-          <span>CONTACT</span>
-        </motion.div>
-        
-        {showButton && (
-          <div className="scroll-top-btn" onClick={scrollToTop}>
-            <FaArrowUp />
-          </div>
-        )}
-      </div>
-
-      <div className="container-fluid footer-section">
-        <div className="row">
-          <div className="col-12">
-            <div className="footer-line"></div>
-
-            <div className="footer-content">
-              <div className="footer-left">
-                © Developer Portfolio by <span>Manas Gupta</span>
-              </div>
-
-              <div className="footer-right">
-                <span>All rights reserved</span>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
-    </>
+    </section>
   );
 }
-
-export default Contact;

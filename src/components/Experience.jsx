@@ -1,102 +1,32 @@
-import React from "react";
-import { motion } from "framer-motion";
-import "../customCss/Experience.css";
-import laptopImage from "../assets/Laptop_image.png";
+import { useRef } from "react";
+import { motion, useScroll, useSpring } from "framer-motion";
+import { FaBriefcase } from "react-icons/fa";
+import { SectionHead } from "./Section";
 
-function Experience() {
-  const experiences = [
-    {
-      id: 1,
-      date: "(Sept 2024 - Dec 2025)",
-      title: "Full Stack Developer",
-      company: "Personal & Academic Projects",
-    },
-    {
-      id: 2,
-      date: "(Jan 2025 - Mar 2025 · 8 Weeks)",
-      title: "Web Development Intern",
-      company: "Internshala Trainings (Virtual)",
-    },
-    {
-      id: 3,
-      date: "(Jan 2026 - Present)",
-      title: "MERN + AI Training",
-      company: "CETPA Infotech Pvt Ltd",
-    },
-    {
-      id: 4,
-      date: "(Jan 2022 - Present)",
-      title: "Self Employed",
-      company: "Code & build projects on a daily basis",
-    },
-  ];
+export default function Experience({ items }) {
+  const ref = useRef(null);
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start 75%", "end 60%"] });
+  const scaleY = useSpring(scrollYProgress, { stiffness: 110, damping: 26 });
 
   return (
-    <>
-    <section id="experience">
-      <div className="container-fluid experience-section">
-        <div className="row mb-4">
-          <div className="col-12">
-            <motion.div
-              className="header mt-3 text-center"
-              initial={{ opacity: 0, y: -20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6 }}
-            >
-              <span>Experience</span>
-
-              <p className="experince-subtitle">
-                My hands-on experience and professional learning journey.
-              </p>
+    <section className="section" id="experience">
+      <div className="wrap">
+        <SectionHead title="Experience" sub="My hands-on experience and professional learning journey." />
+        <div className="tl" ref={ref}>
+          <div className="tl-rail"><motion.div className="tl-fill" style={{ scaleY }} /></div>
+          {items.map((e, i) => (
+            <motion.div className="tl-item" key={e._id} initial={{ opacity: 0, x: 50 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, margin: "-60px" }} transition={{ duration: 0.7, delay: 0.05 * (i % 2), ease: [0.22, 1, 0.36, 1] }}>
+              <motion.span className="tl-node" initial={{ scale: 0 }} whileInView={{ scale: 1 }} viewport={{ once: true }} transition={{ type: "spring", stiffness: 300, damping: 15, delay: 0.2 }} />
+              <div className="glass tl-card">
+                {e.period && <span className="tl-period">{e.period}</span>}
+                <h3>{e.title}</h3>
+                <div className="co"><FaBriefcase size={14} /> {e.company}</div>
+                {e.description && <p className="desc">{e.description}</p>}
+              </div>
             </motion.div>
-          </div>
-        </div>
-
-        <div className="row align-items-center">
-          <motion.div className="col-lg-6 col-md-6 col-12 scene-container mb-5 mb-md-0 text-center"
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.8, delay: 0.3 }}>
-            <img
-              src={laptopImage}
-              alt="Developer working on laptop"
-              className="img-fluid"
-            />
-          </motion.div>
-
-          <motion.div className="col-lg-6 col-md-6 col-12"
-            initial={{ opacity: 0, x: -60 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8 }}>
-            <div className="timeline">
-              {experiences.map((exp) => (
-                <div key={exp.id} className="timeline-item">
-                  <div className="timeline-content">
-                    <div className="neon-border"></div>
-
-                    <span className="date">{exp.date}</span>
-
-                    <div className="content-body">
-                      <div className="icon-container">
-                        <i className="bi bi-briefcase-fill"></i>
-                      </div>
-
-                      <div className="text-container">
-                        <h3 className="title">{exp.title}</h3>
-                        <p className="company">{exp.company}</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </motion.div>
+          ))}
         </div>
       </div>
-      </section>
-    </>
+    </section>
   );
 }
-
-export default Experience;

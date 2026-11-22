@@ -1,78 +1,36 @@
-import React from "react";
-import "../customCss/Skill.css";
-import { motion } from "framer-motion";
+import { SectionHead } from "./Section";
+import { SkillIcon, skillColor } from "../lib/icons";
 
-import {
-  FaHtml5,
-  FaCss3Alt,
-  FaJs,
-  FaBootstrap,
-  FaPhp,
-  FaReact,
-  FaGitAlt,
-  FaDatabase,
-  FaGithub,
-} from "react-icons/fa";
-
-import {
-  SiTailwindcss,
-  SiMysql,
-  SiJquery,
-  SiC,
-  SiCplusplus,
-} from "react-icons/si";
-
-const skills = [
-  { name: "HTML", icon: <FaHtml5 />, cssClass: "icon-html" },
-  { name: "CSS", icon: <FaCss3Alt />, cssClass: "icon-css" },
-  { name: "JavaScript", icon: <FaJs />, cssClass: "icon-js" },
-  { name: "Bootstrap", icon: <FaBootstrap />, cssClass: "icon-bootstrap" },
-  { name: "jQuery", icon: <SiJquery />, cssClass: "icon-jquery" },
-  { name: "PHP", icon: <FaPhp />, cssClass: "icon-php" },
-  { name: "MySQL", icon: <SiMysql />, cssClass: "icon-mysql" },
-  { name: "React JS", icon: <FaReact />, cssClass: "icon-react" },
-  { name: "Tailwind", icon: <SiTailwindcss />, cssClass: "icon-tailwind" },
-  { name: "Git", icon: <FaGitAlt />, cssClass: "icon-git" },
-  { name: "GitHub", icon: <FaGithub />, cssClass: "icon-git" },
-];
-
-
-const SkillsMarquee = () => {
+function Row({ items, reverse }) {
+  const list = items.length < 6 ? [...items, ...items, ...items, ...items] : [...items, ...items];
+  // track is exactly two identical halves so the -50% translate loops seamlessly
+  const half = list;
   return (
-    <>
-      <hr className="custom-hr" />
-      <div className="marquee-container" id="skills">
-        <motion.div
-          className="header-badge"
-          initial={{ opacity: 0, y: -20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-        >
-          <span>Skills</span>
-        </motion.div>
-
-        <div className="marquee-wrapper">
-          <motion.div
-            className="marquee-track"
-            initial={{ opacity: 0, x: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 1.5 }}
-          >
-            {[...skills, ...skills].map((skill, index) => (
-              <div key={index} className="skill-card">
-                <div className={`skill-icon ${skill.cssClass}`}>
-                  {skill.icon}
-                </div>
-                <p className="skill-name">{skill.name}</p>
-              </div>
-            ))}
-          </motion.div>
-        </div>
+    <div className={`marquee ${reverse ? "rev" : ""}`}>
+      <div className="marquee-track">
+        {[...half, ...half].map((s, i) => (
+          <div key={i} className="skill glass" style={{ "--c": skillColor(s.icon) }} aria-hidden={i >= half.length}>
+            <div className="ico"><SkillIcon name={s.icon} size={38} /></div>
+            <p>{s.name}</p>
+            <div className="bar"><i style={{ width: `${s.level ?? 80}%` }} /></div>
+          </div>
+        ))}
       </div>
-    </>
+    </div>
   );
-};
+}
 
-export default SkillsMarquee;
+export default function Skills({ items }) {
+  const mid = Math.ceil(items.length / 2);
+  const a = items.slice(0, mid);
+  const b = items.slice(mid);
+  return (
+    <section className="section" id="skills">
+      <div className="wrap">
+        <SectionHead title="Skills" sub="Technologies and tools I use to build things for the web." />
+      </div>
+      <Row items={a} />
+      {b.length > 0 && <Row items={b} reverse />}
+    </section>
+  );
+}

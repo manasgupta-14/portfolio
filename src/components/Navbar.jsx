@@ -1,148 +1,58 @@
-import React, { useState, useEffect } from "react";
-import "../customCss/Navbar.css";
+import { useEffect, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 
-function Navbar() {
+const LABELS = {
+  home: "Home", about: "About", education: "Education", experience: "Experience",
+  skills: "Skills", projects: "Projects", certification: "Certificates", contact: "Contact",
+};
 
+export default function Navbar({ ids, brand }) {
   const [active, setActive] = useState("home");
-
-  const scrollToSection = (id) => {
-    const section = document.getElementById(id);
-    if (section) {
-      section.scrollIntoView({
-        behavior: "smooth"
-      });
-      setActive(id);
-
-      const nav = document.getElementById("navMenu");
-      if (nav.classList.contains("show")) {
-        nav.classList.remove("show");
-      }
-    }
-  };
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    const sections = ["home", "about", "education", "experience","skills", "projects", "certification","contact"];
+    const io = new IntersectionObserver(
+      (entries) => entries.forEach((e) => e.isIntersecting && setActive(e.target.id)),
+      { rootMargin: "-45% 0px -50% 0px" }
+    );
+    ids.forEach((id) => { const el = document.getElementById(id); if (el) io.observe(el); });
+    return () => io.disconnect();
+  }, [ids]);
 
-    const handleScroll = () => {
-      const scrollPosition = window.scrollY + 100;
-
-      sections.forEach((id) => {
-        const section = document.getElementById(id);
-        if (section) {
-          if (
-            scrollPosition >= section.offsetTop &&
-            scrollPosition < section.offsetTop + section.offsetHeight
-          ) {
-            setActive(id);
-          }
-        }
-      });
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  const go = (id) => {
+    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+    setOpen(false);
+  };
 
   return (
-    <nav className="navbar custom-navbar navbar-expand-lg fixed-top">
-      <div className="container">
-        <span
-          className="navbar-brand custom-logo"
-          onClick={() => scrollToSection("home")}
-        >
-          Manas
-        </span>
-
-        <button
-          className="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navMenu"
-        >
-          <span className="navbar-toggler-icon"></span>
-        </button>
-
-        <div className="collapse navbar-collapse" id="navMenu">
-          <ul className="navbar-nav ms-auto custom-nav-links">
-
-            <li className="nav-item">
-              <button
-                className={`nav-link ${active === "home" ? "active-link" : ""}`}
-                onClick={() => scrollToSection("home")}
-              >
-                Home
-              </button>
-            </li>
-
-            <li className="nav-item">
-              <button
-                className={`nav-link ${active === "about" ? "active-link" : ""}`}
-                onClick={() => scrollToSection("about")}
-              >
-                About
-              </button>
-            </li>
-
-            <li className="nav-item">
-              <button
-                className={`nav-link ${active === "education" ? "active-link" : ""}`}
-                onClick={() => scrollToSection("education")}
-              >
-                Education
-              </button>
-            </li>
-
-             <li className="nav-item">
-              <button
-                className={`nav-link ${active === "experience" ? "active-link" : ""}`}
-                onClick={() => scrollToSection("experience")}
-              >
-                Experience
-              </button>
-            </li>
-
-            <li className="nav-item">
-              <button
-                className={`nav-link ${active === "skills" ? "active-link" : ""}`}
-                onClick={() => scrollToSection("skills")}
-              >
-                Skills
-              </button>
-            </li>
-
-            <li className="nav-item">
-              <button
-                className={`nav-link ${active === "projects" ? "active-link" : ""}`}
-                onClick={() => scrollToSection("projects")}
-              >
-                Projects
-              </button>
-            </li>
-
-            <li className="nav-item">
-              <button
-                className={`nav-link ${active === "certification" ? "active-link" : ""}`}
-                onClick={() => scrollToSection("certification")}
-              >
-                Certification
-              </button>
-            </li>
-
-
-            <li className="nav-item">
-              <button
-                className={`nav-link ${active === "contact" ? "active-link" : ""}`}
-                onClick={() => scrollToSection("contact")}
-              >
-                Contact
-              </button>
-            </li>
-
+    <>
+      <nav className="nav" aria-label="Main">
+        <div className="nav-pill">
+          <button className="nav-logo" onClick={() => go("home")} aria-label="Go to top">{brand}</button>
+          <ul className="nav-links">
+            {ids.map((id) => (
+              <li key={id}>
+                <button className={`nav-link ${active === id ? "active" : ""}`} onClick={() => go(id)}>
+                  {active === id && <motion.span layoutId="nav-bg" className="nav-bg" transition={{ type: "spring", stiffness: 380, damping: 32 }} />}
+                  {LABELS[id]}
+                </button>
+              </li>
+            ))}
           </ul>
+          <button className={`nav-burger ${open ? "open" : ""}`} onClick={() => setOpen(!open)} aria-label="Menu" aria-expanded={open}>
+            <span />
+          </button>
         </div>
-      </div>
-    </nav>
+      </nav>
+      <AnimatePresence>
+        {open && (
+          <motion.div className="nav-drawer" initial={{ opacity: 0, y: -12, scale: 0.97 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -12, scale: 0.97 }} transition={{ duration: 0.2 }}>
+            {ids.map((id) => (
+              <button key={id} className={active === id ? "active" : ""} onClick={() => go(id)}>{LABELS[id]}</button>
+            ))}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
   );
 }
-
-export default Navbar;

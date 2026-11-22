@@ -1,119 +1,45 @@
-import "../customCss/Project.css";
 import { motion } from "framer-motion";
-import {
-  Globe,
-  School,
-  Wrench,
-  ExternalLink,
-  UtensilsCrossed,
-} from "lucide-react";
+import { FaExternalLinkAlt, FaGithub } from "react-icons/fa";
+import { SectionHead, stagger, rise } from "./Section";
+import { useTilt } from "../lib/hooks";
+import { assetUrl } from "../lib/api";
 
-const projects = [
-  {
-    title: "Tourism Website",
-    description:
-      "A comprehensive tourism website featuring online repairing, attendance management system, and various web development projects.",
-    url: "https://manasgupta-14.github.io/Mera-Safar---Safar-Aapka-Zimmedari-Hamari-/",
-    icon: Globe,
-    technologies: ["HTML", "CSS", "JavaScript"],
-  },
-  {
-    title: "Restaurant Management System",
-    description:
-      "A modern restaurant website with menu, contact and responsive design.",
-    url: "https://manasgupta-14.github.io/Restaurant-/",
-    icon: UtensilsCrossed,
-    technologies: ["HTML", "CSS"],
-  },
-  {
-    title: "School Website",
-    description:
-      "School management website with attendance system and student records.",
-    icon: School,
-    technologies: ["HTML", "CSS", "JavaScript", "PHP", "MySQL"],
-  },
-  {
-    title: "Appliance & Home Repair Services",
-    description:
-      "One-stop platform for AC, fan, mobile, and appliance repairing services.",
-    icon: Wrench,
-    technologies: ["HTML", "CSS", "JavaScript", "Bootstrap", "PHP"],
-  },
-];
-
-function Projects() {
+function Card({ p }) {
+  const t = useTilt(7);
+  const img = assetUrl(p.image);
   return (
-    <>
-      <div className="container-fluid mt-5 mb-4" id="projects">
-        <div className="row">
-          <div className="col-12">
-            <motion.div
-              className="projects-heading-wrapper"
-              initial={{ opacity: 0, y: -20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6 }}
-            >
-              <div className="projects-heading">
-                <span className="projects-badge">PROJECTS</span>
-              </div>
-
-              <p className="projects-subtitle">
-                A showcase of my development projects and practical
-                implementations.
-              </p>
-            </motion.div>
-          </div>
+    <motion.div variants={rise}>
+      <article className="glass tilt proj-card" ref={t.ref} onMouseMove={t.onMouseMove} onMouseLeave={t.onMouseLeave}>
+        <div className="proj-media">
+          {img ? <img src={img} alt={p.title} loading="lazy" /> : <span className="big">{p.title.slice(0, 2)}</span>}
         </div>
-      </div>
-
-      <div className="container-fluid">
-        <div className="row g-4">
-          {projects.map((project, index) => {
-            const Icon = project.icon;
-            return (
-              <div key={index} className="col-12 col-md-6">
-                <motion.div
-                  className="project-card"
-                  whileHover={{ y: -6 }}
-                  transition={{ duration: 0.3 }}
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                >
-                  <div className="project-icon-box">
-                    <Icon size={26} />
-                  </div>
-
-                  <h3 className="project-title">{project.title}</h3>
-                  <p className="project-desc">{project.description}</p>
-
-                  <div className="project-tech">
-                    {project.technologies.map((tech, i) => (
-                      <span key={i} className="tech-box">
-                        {tech}
-                      </span>
-                    ))}
-                  </div>
-
-                  {project.url && (
-                    <a
-                      href={project.url}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="project-link"
-                    >
-                      <ExternalLink size={18} />
-                    </a>
-                  )}
-                </motion.div>
-              </div>
-            );
-          })}
+        <div className="proj-body">
+          <h3>{p.title}</h3>
+          <p>{p.description}</p>
+          {p.technologies?.length > 0 && (
+            <div className="chips">{p.technologies.map((x) => <span className="chip" key={x}>{x}</span>)}</div>
+          )}
+          {(p.url || p.githubUrl) && (
+            <div className="proj-links">
+              {p.url && <a className="link-btn primary" href={p.url} target="_blank" rel="noreferrer"><FaExternalLinkAlt size={12} /> Live demo</a>}
+              {p.githubUrl && <a className="link-btn" href={p.githubUrl} target="_blank" rel="noreferrer"><FaGithub /> Code</a>}
+            </div>
+          )}
         </div>
-      </div>
-    </>
+      </article>
+    </motion.div>
   );
 }
 
-export default Projects;
+export default function Projects({ items }) {
+  return (
+    <section className="section" id="projects">
+      <div className="wrap">
+        <SectionHead title="Projects" sub="A showcase of my development projects and practical implementations." />
+        <motion.div className="proj-grid" variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-80px" }}>
+          {items.map((p) => <Card key={p._id} p={p} />)}
+        </motion.div>
+      </div>
+    </section>
+  );
+}

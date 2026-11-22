@@ -1,52 +1,43 @@
-import "../customCss/About.css";
-import profileImage from "../assets/Photo.jpg";
 import { motion } from "framer-motion";
+import { FaMapMarkerAlt, FaEnvelope, FaPhoneAlt, FaGraduationCap } from "react-icons/fa";
+import { SectionHead, stagger, rise } from "./Section";
+import { useTilt } from "../lib/hooks";
+import { assetUrl } from "../lib/api";
 
-function About() {
+export default function About({ profile, education }) {
+  const tilt = useTilt(12);
+  const paras = profile.aboutParagraphs?.filter(Boolean) || [];
+  const photo = assetUrl(profile.photo);
+  const latest = education?.[0];
+
   return (
-    <section className="about-section" id="about">
-      <div className="container-fluid about-container">
-        <div className="row align-items-center">
-          <motion.div className="col-12 col-md-6 about-content"
-           initial={{ opacity: 0, x: -60 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8 }}>
-            <h3 className="about-title">Who Am I?</h3>
-
-            <p className="about-text">
-              My name is Manas Gupta, and I am a dedicated and enthusiastic Web Developer as well as a BCA graduate with hands-on experience in{" "}
-              <b
-                style={{
-                  fontSize: "17px",
-                  color: "#ffd000",
-                  textShadow: "5px 3px 6px rgba(0,0,0,0.5)",
-                }}
-              >
-                "HTML5, CSS3, JavaScript, Bootstrap, jQuery, PHP, React JS,
-                MySQL, and SQL"
-              </b>
-              . I have a solid understanding of front-end development using JavaScript and React JS, and I am experienced in building dynamic, database-driven websites using PHP and MySQL. I enjoy working on real-world projects that help me improve my logic, coding skills, and problem-solving abilities.
-            </p>
-
-            <p className="about-text">
-              Currently, I am pursuing MERN Stack + AI Training from CETPA Infotech Pvt. Ltd., where I am enhancing my skills in modern web development technologies, full-stack application development, and AI-based solutions.
-            </p>
-
-            <p className="about-text">
-              I am a quick learner, passionate about technology, and always eager to enhance my skills by learning new tools and frameworks. I am actively looking for job or internship opportunities where I can apply my knowledge, gain industry experience, and grow as a professional web developer.
-            </p>
+    <section className="section" id="about">
+      <div className="wrap">
+        <SectionHead title="Who Am I?" />
+        <div className="about-grid">
+          <motion.div initial={{ opacity: 0, scale: 0.85, rotate: -6 }} whileInView={{ opacity: 1, scale: 1, rotate: 0 }} viewport={{ once: true }} transition={{ duration: 0.9, ease: "easeOut" }}>
+            <div className="tilt about-photo" ref={tilt.ref} onMouseMove={tilt.onMouseMove} onMouseLeave={tilt.onMouseLeave} style={{ borderRadius: "50%" }}>
+              <div className="ring" />
+              <div className="img">
+                {photo ? <img src={photo} alt={profile.name || "Profile"} /> : <div className="empty">{(profile.name || "?")[0]}</div>}
+              </div>
+              <motion.div className="badge-float" animate={{ y: [0, -8, 0] }} transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut" }}>
+                <span className="dot-live" /> Available for work
+              </motion.div>
+            </div>
           </motion.div>
 
-          <div className="col-12 col-md-6 mt-5 d-flex justify-content-center">
-            <div className="hero-image">
-              <div className="glow-circle"></div>
-              <img src={profileImage} alt="Profile" />
-            </div>
-          </div>
+          <motion.div className="about-text" variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-80px" }}>
+            {paras.map((t, i) => <motion.p key={i} variants={rise}>{t}</motion.p>)}
+            <motion.div className="about-facts" variants={rise}>
+              {profile.location && <div className="fact glass"><FaMapMarkerAlt /> {profile.location}</div>}
+              {profile.email && <div className="fact glass"><FaEnvelope /> {profile.email}</div>}
+              {profile.phone && <div className="fact glass"><FaPhoneAlt /> {profile.phone}</div>}
+              {latest && <div className="fact glass"><FaGraduationCap /> {latest.course}</div>}
+            </motion.div>
+          </motion.div>
         </div>
       </div>
     </section>
   );
 }
-
-export default About;

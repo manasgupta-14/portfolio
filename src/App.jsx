@@ -1,27 +1,22 @@
-import Navbar from "./components/Navbar";
-import Hero from "./components/Hero";
-import About from "./components/About";
-import Skills from "./components/Skills";
-import Projects from "./components/Projects";
-import Experience from "./components/Experience";
-import Contact from "./components/Contact";
-import Education from "./components/Education";
-import Certification from "./components/Certification";
+import { lazy, Suspense } from "react";
+import { Route, Routes } from "react-router-dom";
+import Site from "./Site";
 
-function App() {
+const Admin = lazy(() => import("./admin/Admin"));
+
+export default function App() {
   return (
-    <>
-      <Navbar />
-      <Hero />
-      <About />
-      <Education />
-      <Experience />
-      <Skills />
-      <Projects />
-      <Certification />
-      <Contact />
-    </>
+    <Routes>
+      <Route path="/" element={<Site />} />
+      <Route
+        path="/admin/*"
+        element={
+          <Suspense fallback={<div style={{ padding: 40, color: "#8f9ab3" }}>Loading...</div>}>
+            <Admin />
+          </Suspense>
+        }
+      />
+      <Route path="*" element={<Site />} />
+    </Routes>
   );
 }
-
-export default App;
