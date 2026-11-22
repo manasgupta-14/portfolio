@@ -12,11 +12,14 @@ import Projects from "./components/Projects";
 import Certifications from "./components/Certifications";
 import Contact from "./components/Contact";
 import Footer from "./components/Footer";
+import SideHud from "./components/SideHud";
+import CommandPalette from "./components/CommandPalette";
 
 export default function Site() {
   const [data, setData] = useState(null);
   const [error, setError] = useState("");
   const [loaderGone, setLoaderGone] = useState(false);
+  const [palette, setPalette] = useState(false);
 
   const load = useCallback(() => {
     setError("");
@@ -60,7 +63,9 @@ export default function Site() {
       {data && !error && (
         <>
           <ScrollProgress />
-          <Navbar ids={ids} brand={(data.profile.name || "Portfolio").split(" ")[0]} />
+          <Navbar ids={ids} brand={(data.profile.name || "Portfolio").split(" ")[0]} onPalette={() => setPalette(true)} />
+          <SideHud ids={ids} />
+          <CommandPalette open={palette} setOpen={setPalette} ids={ids} profile={data.profile} />
           <main>
             <Hero data={data} />
             {ids.includes("about") && <About profile={data.profile} education={data.education} />}

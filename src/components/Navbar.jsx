@@ -1,23 +1,15 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import { useActiveSection } from "../lib/hooks";
 
 const LABELS = {
   home: "Home", about: "About", education: "Education", experience: "Experience",
   skills: "Skills", projects: "Projects", certification: "Certificates", contact: "Contact",
 };
 
-export default function Navbar({ ids, brand }) {
-  const [active, setActive] = useState("home");
+export default function Navbar({ ids, brand, onPalette }) {
+  const active = useActiveSection(ids);
   const [open, setOpen] = useState(false);
-
-  useEffect(() => {
-    const io = new IntersectionObserver(
-      (entries) => entries.forEach((e) => e.isIntersecting && setActive(e.target.id)),
-      { rootMargin: "-45% 0px -50% 0px" }
-    );
-    ids.forEach((id) => { const el = document.getElementById(id); if (el) io.observe(el); });
-    return () => io.disconnect();
-  }, [ids]);
 
   const go = (id) => {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
@@ -39,6 +31,9 @@ export default function Navbar({ ids, brand }) {
               </li>
             ))}
           </ul>
+          <button className="nav-k" onClick={onPalette} aria-label="Open command menu" aria-keyshortcuts="Control+K Meta+K">
+            <kbd>{typeof navigator !== "undefined" && /Mac|iPhone|iPad/.test(navigator.platform) ? "⌘" : "Ctrl"}</kbd><kbd>K</kbd>
+          </button>
           <button className={`nav-burger ${open ? "open" : ""}`} onClick={() => setOpen(!open)} aria-label="Menu" aria-expanded={open}>
             <span />
           </button>

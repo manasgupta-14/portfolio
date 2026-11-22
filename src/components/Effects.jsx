@@ -37,19 +37,19 @@ export function Background() {
         }
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-        ctx.fillStyle = "rgba(160, 175, 255, 0.75)";
+        ctx.fillStyle = "rgba(150, 190, 255, 0.75)";
         ctx.fill();
         for (let j = i + 1; j < parts.length; j++) {
           const q = parts[j], d = Math.hypot(p.x - q.x, p.y - q.y);
           if (d < 130) {
-            ctx.strokeStyle = `rgba(124, 92, 255, ${0.22 * (1 - d / 130)})`;
+            ctx.strokeStyle = `rgba(106, 99, 255, ${0.22 * (1 - d / 130)})`;
             ctx.lineWidth = 1;
             ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(q.x, q.y); ctx.stroke();
           }
         }
         const md = Math.hypot(p.x - mouse.x, p.y - mouse.y);
         if (md < 180) {
-          ctx.strokeStyle = `rgba(45, 226, 200, ${0.5 * (1 - md / 180)})`;
+          ctx.strokeStyle = `rgba(54, 230, 255, ${0.5 * (1 - md / 180)})`;
           ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(mouse.x, mouse.y); ctx.stroke();
         }
       }
@@ -76,13 +76,35 @@ export function Background() {
     };
   }, []);
 
+  // soft light that follows the pointer (no re-render, just CSS variables)
+  const spot = useRef(null);
+  useEffect(() => {
+    if (!window.matchMedia("(pointer: fine)").matches) return;
+    const el = spot.current;
+    let raf = 0, tx = window.innerWidth / 2, ty = window.innerHeight / 3, cx = tx, cy = ty;
+    const move = (e) => { tx = e.clientX; ty = e.clientY; };
+    const loop = () => {
+      cx += (tx - cx) * 0.12; cy += (ty - cy) * 0.12;
+      el.style.setProperty("--sx", `${cx}px`);
+      el.style.setProperty("--sy", `${cy}px`);
+      raf = requestAnimationFrame(loop);
+    };
+    window.addEventListener("mousemove", move);
+    raf = requestAnimationFrame(loop);
+    return () => { window.removeEventListener("mousemove", move); cancelAnimationFrame(raf); };
+  }, []);
+
   return (
-    <div className="bg-layer" aria-hidden="true">
-      <div className="bg-grid" />
-      <div className="orb orb-a" />
-      <div className="orb orb-b" />
-      <canvas ref={ref} />
-    </div>
+    <>
+      <div className="bg-layer" aria-hidden="true">
+        <div className="bg-grid" />
+        <div className="orb orb-a" />
+        <div className="orb orb-b" />
+        <canvas ref={ref} />
+        <div className="spot" ref={spot} />
+      </div>
+      <div className="grain" aria-hidden="true" />
+    </>
   );
 }
 
@@ -99,13 +121,23 @@ export function Cursor() {
     setOn(true);
     document.body.classList.add("has-cursor");
     const move = (e) => { x.set(e.clientX); y.set(e.clientY); };
-    const over = (e) => setHover(!!e.target.closest?.("a, button, input, textarea, select, [role=button], .tilt"));
+    const over = (e) => setHover(!!e.target.closest?.("a, button, input, textarea, select, [role=button], .tilt, .orbit-canvas"));
+    const down = (e) => {
+      const r = document.createElement("span");
+      r.className = "ripple";
+      r.style.left = `${e.clientX}px`;
+      r.style.top = `${e.clientY}px`;
+      r.addEventListener("animationend", () => r.remove());
+      document.body.appendChild(r);
+    };
     window.addEventListener("mousemove", move);
     window.addEventListener("mouseover", over);
+    window.addEventListener("mousedown", down);
     return () => {
       document.body.classList.remove("has-cursor");
       window.removeEventListener("mousemove", move);
       window.removeEventListener("mouseover", over);
+      window.removeEventListener("mousedown", down);
     };
   }, [x, y]);
 
@@ -125,6 +157,13 @@ export function ScrollProgress() {
 }
 
 /* ---------- intro loader ---------- */
+const BOOT = [
+  "booting portfolio runtime",
+  "loading modules: react, framer-motion, canvas",
+  "requesting profile from API",
+  "rendering interface",
+];
+
 export function Preloader({ ready, onDone, name = "Portfolio" }) {
   const [pct, setPct] = useState(0);
   const doneRef = useRef(false);
@@ -165,6 +204,17 @@ export function Preloader({ ready, onDone, name = "Portfolio" }) {
             </motion.span>
           ))}
         </div>
+        <ul className="boot-log" aria-hidden="true">
+          {BOOT.map((line, i) => {
+            const on = pct >= i * 25 + (i === 0 ? 0 : 5);
+            const ok = pct >= (i + 1) * 25 || pct >= 100;
+            return (
+              <li key={line} className={on ? "on" : ""}>
+                <span>{ok ? "ok" : "··"}</span> {line}
+              </li>
+            );
+          })}
+        </ul>
         <div className="preloader-bar"><i style={{ width: `${pct}%` }} /></div>
         <div className="preloader-count">{String(pct).padStart(2, "0")}%</div>
       </div>

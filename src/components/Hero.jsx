@@ -1,7 +1,9 @@
-import { motion } from "framer-motion";
+import { useRef } from "react";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { FaGithub, FaLinkedin, FaEnvelope, FaPhoneAlt, FaDownload, FaArrowRight } from "react-icons/fa";
-import { useCountUp, useMagnetic, useScramble, useTilt, useTyper } from "../lib/hooks";
+import { useCountUp, useMagnetic, useScramble, useTyper } from "../lib/hooks";
 import { assetUrl } from "../lib/api";
+import Orbit3D from "./Orbit3D";
 
 function Stat({ to, label }) {
   const [ref, v] = useCountUp(to);
@@ -23,31 +25,24 @@ export default function Hero({ data }) {
   const name = profile.name || "Your Name";
   const scrambled = useScramble(name, { delay: 900 });
   const role = useTyper(profile.roles?.length ? profile.roles : ["Web Developer"]);
-  const tilt = useTilt(8);
-
-  const skillNames = (skills.length ? skills : []).slice(0, 8).map((s) => s.name);
   const go = (id) => document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
 
-  const lines = [
-    [<span className="k" key="a">const</span>, " ", <span className="v" key="b">developer</span>, " = {"],
-    ["  name: ", <span className="s" key="c">'{name}'</span>, ","],
-    ["  role: ", <span className="s" key="d">'{profile.roles?.[1] || profile.roles?.[0] || "Developer"}'</span>, ","],
-    ["  stack: [", <span className="s" key="e">{skillNames.map((n) => `'${n}'`).join(", ")}</span>, "],"],
-    ["  hardWorker: ", <span className="b" key="f">true</span>, ","],
-    ["  quickLearner: ", <span className="b" key="g">true</span>, ","],
-    ["  hireable: ", <span className="k" key="h">()</span>, " => ", <span className="b" key="i">true</span>],
-    ["};"],
-  ];
+  // the sphere drifts up and shrinks as the page scrolls away from the hero
+  const ref = useRef(null);
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
+  const y = useTransform(scrollYProgress, [0, 1], [0, 120]);
+  const scale = useTransform(scrollYProgress, [0, 1], [1, 0.82]);
+  const fade = useTransform(scrollYProgress, [0, 0.85], [1, 0.15]);
 
   return (
-    <section className="hero" id="home">
+    <section className="hero" id="home" ref={ref}>
       <div className="wrap">
         <div className="hero-grid">
           <div>
             <motion.p className="hero-hello" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
               &gt; hello_world, I am
             </motion.p>
-            <h1 className="hero-name" aria-label={name}>{scrambled}</h1>
+            <h1 className="hero-name glitch" aria-label={name} data-text={scrambled}>{scrambled}</h1>
             <motion.div className="hero-role" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.1 }}>
               {role}<span className="caret" />
             </motion.div>
@@ -68,24 +63,15 @@ export default function Hero({ data }) {
             </motion.div>
           </div>
 
-          <motion.div className="code-stage" initial={{ opacity: 0, scale: 0.9, rotateY: -12 }} animate={{ opacity: 1, scale: 1, rotateY: 0 }} transition={{ delay: 0.5, duration: 0.9, ease: "easeOut" }}>
-            <div className="tilt" ref={tilt.ref} onMouseMove={tilt.onMouseMove} onMouseLeave={tilt.onMouseLeave} style={{ borderRadius: 20 }}>
-              <div className="code-win">
-                <div className="code-bar"><i /><i /><i /><span>developer.js</span></div>
-                <div className="code-body">
-                  {lines.map((parts, i) => (
-                    <motion.div key={i} initial={{ opacity: 0, x: -12 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 1 + i * 0.13 }}>
-                      {parts.map((p, j) => (typeof p === "string" ? <span key={j}>{p}</span> : p))}
-                    </motion.div>
-                  ))}
-                </div>
-              </div>
-            </div>
-            <motion.div className="float-chip a" animate={{ y: [0, -10, 0] }} transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}>
-              <span className="dot-live" /> Open to work
-            </motion.div>
-            <motion.div className="float-chip b" animate={{ y: [0, 10, 0] }} transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}>
-              {"</>"} MERN + AI
+          <motion.div className="orbit-stage" style={{ y, scale, opacity: fade }}>
+            <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.6, duration: 1.1, ease: [0.22, 1, 0.36, 1] }}>
+              <Orbit3D skills={skills} />
+              <motion.div className="float-chip a" animate={{ y: [0, -10, 0] }} transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}>
+                <span className="dot-live" /> Open to work
+              </motion.div>
+              <motion.div className="float-chip b" animate={{ y: [0, 10, 0] }} transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}>
+                {"</>"} MERN + AI
+              </motion.div>
             </motion.div>
           </motion.div>
         </div>
